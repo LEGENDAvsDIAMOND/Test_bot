@@ -1,36 +1,37 @@
-from pyrogram import Client, filters
+import telebot
 import random
 
+TOKEN = "6518779627:AAFbGiUhVkjNDAOZZeuRX1alp4RViqs7uf4"
 
-API_TOKEN = "6518779627:AAFbGiUhVkjNDAOZZeuRX1alp4RViqs7uf4"
+bot = telebot.TeleBot(TOKEN)
 
-one_bot = Client("Test_bot", api_id=12345, api_hash="API_HASHINGIZ", bot_token=API_TOKEN)
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, "Assalomu alaykum! Matematik amallardan iborat botimizga xush kelibsiz!😊")
 
-@one_bot.on_message(filters.command("start"))
-def start_command(client, message):
-    message.reply_text("Assalomu alaykum! Matematikaga oid testimizga xush kelibsiz!")
-
-@one_bot.on_message(filters.command("test"))
-def test_command(client, message):
-    amallar = {
-        '90 + 45': 135,
-        '2 * 3': 6,
-        '99 - 80': 19,
-        '175 / 5': 35,
-        '10 ** 2': 20
+@bot.message_handler(commands=['test'])
+def test(message):
+    operations = {
+        '187 + 89': 276,
+        '12 * 3': 36,
+        '175 - 108': 67,
+        '98 / 16': 6.125,
+        '3 ** 2': 9
     }
 
-    savol = random.choice(list(amallar.keys()))
-    answer = amallar[savol]
+    question = random.choice(list(operations.keys()))
+    correct_answer = operations[question]
 
-    message.reply_text(f"{savol} = ?")
+    bot.send_message(message.chat.id, f"Question: {question} = ?")
 
-    @one_bot.on_message(filters.text)
-    def check_answer(client, message):
-        javob = message.text.strip()
-        if javob.isdigit() and int(javob) == answer:
-            message.reply_text("To'g'ri javob!")
+    @bot.message_handler(func=lambda message: True)
+    def check_answer(message):
+        user_answer = message.text.strip()
+        if user_answer.isdigit() and int(user_answer) == correct_answer:
+            bot.send_message(message.chat.id, "Barakalla! Javobingiz to'g'ri👍")
         else:
-            message.reply_text(f"Noto'g'ri javob. To'g'ri javob {answer} bo'lishi kerak.")
+            bot.send_message(message.chat.id, f"Afsus, javobingiz noto'g'ri😞 To'g'ri javob {correct_answer}.")
 
-one_bot.run()
+    bot.register_next_step_handler(message, check_answer)
+
+bot.polling()
