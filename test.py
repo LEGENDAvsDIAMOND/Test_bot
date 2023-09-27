@@ -1,10 +1,9 @@
 import telebot
 import random
 
-TOKEN = "6518779627:AAFbGiUhVkjNDAOZZeuRX1alp4RViqs7uf4"
 
+TOKEN = '6518779627:AAFbGiUhVkjNDAOZZeuRX1alp4RViqs7uf4'
 bot = telebot.TeleBot(TOKEN)
-
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.send_message(message.chat.id, "Assalomu alaykum! Matematik amallardan iborat botimizga xush kelibsiz!😊")
@@ -35,3 +34,5 @@ def test(message):
     bot.register_next_step_handler(message, check_answer)
 
 bot.polling()
+
+
